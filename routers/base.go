@@ -15,4 +15,10 @@ func Init(r *gin.Engine) {
 		ctx.JSON(http.StatusOK, gin.H{"status": 0, "msg": "ok", "data": "pong"})
 		ctx.Abort()
 	})
+
+	//
+	control_r := r.Group("/control")
+	{
+		control_r.GET("/get")
+	}
 }
