@@ -1,0 +1,15 @@
+vcutter
+.git
+logs/
+tmpcache/
+.DS_Store
+*.swp
+*.exe
+stworker
+.idea
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/stworker.iml
+.idea/workspace.xml
+.idea/libraries/
