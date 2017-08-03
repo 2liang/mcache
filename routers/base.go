@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	//"github.com/2liang/mcache/controller"
 	"github.com/2liang/mcache/controller"
 )
 
