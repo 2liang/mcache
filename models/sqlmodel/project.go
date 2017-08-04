@@ -50,8 +50,7 @@ func (ap *ProjectData) AddProject () (int64, error) {
 	if len(r) > 0 {
 		return 1, errors.New("this name (" + ap.Name + ") already exists")
 	}
-	sess := db.NewSession()
-	res, err := sess.Table("projects").Insert(ap)
+	res, err := db.Table("projects").Insert(ap)
 	return res, err
 }
 
