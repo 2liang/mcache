@@ -59,12 +59,20 @@ func (ap *ProjectData) AddProject () (int64, error) {
  */
 func (ap *ProjectData) UpdateProject (id int) (int64, error) {
 	db := base.DbCache.GetMaster()
-	r := make([]ProjectData, 0)
-	if err := db.Table("projects").Where("id = ?", id).Limit(1, 0).Find(&r); err != nil {
+	pres, err := ap.GetProjectByPid()
+	if err != nil {
 		return 1, err
 	}
-	if len(r) < 1 {
-		return 1, errors.New("this project (" + strconv.Itoa(id) + ") does not exist")
+	if len(pres) < 1 {
+		return 1, errors.New("this is project(" + strconv.Itoa(ap.Id) + ") does not exists!")
+	}
+	r := make([]ProjectData, 0)
+	// 判断是否已经存在
+	if err := db.Table("projects").Where("name = ?", ap.Name).Limit(1, 0).Find(&r); err != nil {
+		return 1, err
+	}
+	if len(r) > 0 {
+		return 1, errors.New("this name (" + ap.Name + ") already exists")
 	}
 	res, err := db.Table("projects").Where("id = ?", id).Update(ap)
 	if err != nil {

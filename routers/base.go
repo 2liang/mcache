@@ -20,8 +20,10 @@ func Init(r *gin.Engine) {
 	// 项目
 	project_r := r.Group("/project")
 	{
-		// 获取项目
-		project_r.GET("/get", controller.GetProject)
+		// 根据ID获取项目
+		project_r.GET("/get/:id", controller.GetProjectById)
+		// 获取项目列表
+		project_r.GET("/list", controller.GetProject)
 		// 添加项目
 		project_r.POST("/add", controller.AddProject)
 		// 更新项目
@@ -33,8 +35,9 @@ func Init(r *gin.Engine) {
 	// 实例
 	case_r := r.Group("/case")
 	{
-		// 获取实例
-		case_r.GET("/get", controller.GetCase)
+		case_r.GET("/get/:id", controller.GetCaseById)
+		// 获取实例列表
+		case_r.GET("/list", controller.GetCase)
 		// 添加实例
 		case_r.POST("/add", controller.AddCase)
 		// 更新实例
@@ -46,8 +49,10 @@ func Init(r *gin.Engine) {
 	// key
 	key_r := r.Group("/key")
 	{
-		// 获取key
-		key_r.GET("/get", controller.GetKey)
+		// 根据ID获取key
+		key_r.GET("/get/:id", controller.GetKeyById)
+		// 获取key列表
+		key_r.GET("/list", controller.GetKey)
 		// 添加key
 		key_r.POST("/add", controller.AddKey)
 		// 更新key

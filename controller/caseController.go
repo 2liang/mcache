@@ -7,6 +7,7 @@ import (
 	"time"
 	"strings"
 	"github.com/2liang/mcache/models/sqlmodel"
+	"strconv"
 )
 
 var c_name  = "caseController "
@@ -40,6 +41,30 @@ type UpdateCaseParams struct {
 
 type DeleteCaseParams struct {
 	Id 		int	`form:"id" json:"id" binding:"required"`
+}
+
+func GetCaseById(c *gin.Context) {
+	id := c.Param("id")
+	cid, err := strconv.Atoi(id)
+	if err != nil {
+		setting.SeeLog.Error(c_name + "param error:" + err.Error())
+		c.JSON(http.StatusOK, gin.H{"status": 1, "msg": err.Error(), "data": id})
+		return
+	}
+
+	data := new(sqlmodel.CaseData)
+	res, err := data.GetCaseById(cid)
+	if err != nil {
+		setting.SeeLog.Error(c_name + "get case error:" + err.Error())
+		c.JSON(http.StatusOK, gin.H{"status": 1, "msg": err.Error(), "data": res})
+		return
+	}
+	if len(res) < 1 {
+		setting.SeeLog.Info(c_name + "this case (" + id + ") does not exist!")
+		c.JSON(http.StatusOK, gin.H{"status": 1, "msg": "this case (" + id + ") does not exist!", "data": res})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"status": 1, "msg": "获取实例成功", "data": res[0]})
+	}
 }
 
 func GetCase(c *gin.Context) {
