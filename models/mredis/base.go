@@ -9,12 +9,12 @@ import (
 )
 
 type RedisOption struct {
-	timeout			int
-	readtimeout		int
-	writetimeout	int
-	db 				int
-	mhosts 			string
-	shosts			string
+	Timeout			time.Duration
+	ReadTimeout		time.Duration
+	WriteTimeout	time.Duration
+	Db 				int
+	MHosts 			string
+	SHosts			string
 }
 
 type BaseRedis struct {
@@ -23,6 +23,25 @@ type BaseRedis struct {
 	sredis []*redis.Pool
 }
 
+//type CommandType struct {
+//	Get 	string
+//	Del 	string
+//}
+//
+//type RedisCommand struct {
+//	String 	CommandType
+//	Hash	CommandType
+//	List	CommandType
+//	Set		CommandType
+//	Zset 	CommandType
+//}
+//
+//func (rc *RedisCommand) InitRedisCommand() {
+//	rc.String.Get = "Get"
+//	rc.String.Del = "Del"
+//}
+//
+//var RedisCommand = new(RedisCommand)
 func (b *BaseRedis) InitRedis(option *RedisOption)  {
 
 	b.mredis = &redis.Pool{
@@ -30,12 +49,12 @@ func (b *BaseRedis) InitRedis(option *RedisOption)  {
 		MaxActive: 		500,
 		IdleTimeout: 	30 * time.Second,
 		Dial:           func() (redis.Conn, error) {
-			c, err := redis.DialTimeout("tcp", option.mhosts, time.Duration(option.timeout) * time.Second, time.Duration(option.readtimeout) * time.Second, time.Duration(option.writetimeout * time.Second))
+			c, err := redis.DialTimeout("tcp", option.MHosts, option.Timeout * time.Second, option.ReadTimeout * time.Second, option.WriteTimeout * time.Second)
 			if err != nil {
 				return nil, err
 			}
 
-			if _, err := c.Do("SELECT", option.db); err != nil {
+			if _, err := c.Do("SELECT", option.Db); err != nil {
 				c.Close()
 				return nil, err
 			}
@@ -51,11 +70,10 @@ func (b *BaseRedis) InitRedis(option *RedisOption)  {
 		},
 	}
 
-	shosts := strings.Split(option.shosts, ",")
+	shosts := strings.Split(option.SHosts, ",")
 	if len(shosts) < 1 {
 		setting.Logger.Panic("The redis slave init error")
 	}
-
 	b.sredis = make([]*redis.Pool, 0)
 	for i := 0; i < len(shosts); i++ {
 		func(i int) {
@@ -64,12 +82,12 @@ func (b *BaseRedis) InitRedis(option *RedisOption)  {
 				MaxActive: 		500,
 				IdleTimeout: 	30 * time.Second,
 				Dial:           func() (redis.Conn, error) {
-					c, err := redis.DialTimeout("tcp", shosts[i], time.Duration(option.timeout) * time.Second, time.Duration(option.readtimeout) * time.Second, time.Duration(option.writetimeout * time.Second))
+					c, err := redis.DialTimeout("tcp", shosts[i], option.Timeout * time.Second, option.ReadTimeout * time.Second, option.WriteTimeout * time.Second)
 					if err != nil {
 						return nil, err
 					}
 
-					if _, err := c.Do("SELECT", option.db); err != nil {
+					if _, err := c.Do("SELECT", option.Db); err != nil {
 						c.Close()
 						return nil, err
 					}
@@ -103,9 +121,14 @@ func (b *BaseRedis) Get(key string) (r interface{}, err error) {
 }
 
 func (b *BaseRedis) Set(v ...interface{}) (r interface{}, err error) {
-
 	conn := b.getMredis()
 	return conn.Do("SET", v...)
+}
+
+func (b *BaseRedis) Del(key string) (r interface{}, err error) {
+
+	conn := b.getMredis()
+	return conn.Do("DEL", key)
 }
 
 func (b *BaseRedis) Exists(k string) (r interface{}, err error) {
@@ -153,3 +176,7 @@ func (b *BaseRedis) LRem(v ...interface{}) (r interface{}, err error) {
 	conn := b.getMredis()
 	return conn.Do("LRem", v...)
 }
+
+//func (b *BaseRedis) Do (command string, v ...interface{}) (r interface{}, err error) {
+//
+//}

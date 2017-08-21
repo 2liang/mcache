@@ -21,6 +21,9 @@ func (ap *ProjectData) GetProjectByPid () ([]ProjectData, error) {
 	if err := db.Table("projects").Where("id = ?", ap.Id).Find(&r); err != nil {
 		return nil, err
 	}
+	if len(r) < 0 {
+		return nil, errors.New("this project (" + strconv.Itoa(ap.Id) + ") does not exists!")
+	}
 	return r, nil
 }
 

@@ -15,6 +15,7 @@ type CaseData struct {
 	MasterHost 	string 	`xorm:"'master_host' varchar(250)" json:"master_host"`
 	SlaveHost 	string 	`xorm:"'slave_host' varchar(250)" json:"slave_host"`
 	Port 		int 	`xorm:"'port' int(11)" json:"port"`
+	Db 			int 	`xorm:"'db' int(11)" json:"db"`
 	CreateTime 	int64 	`xorm:"'create_time' int(11)" json:"create_time"`
 	ModifyTime 	int64 	`xorm:"'modify_time' int(11)" json:"modify_time"`
 }
@@ -45,6 +46,9 @@ func (cd *CaseData) GetCaseById(id int) ([]CaseData, error) {
 	r := make([]CaseData, 0)
 	if err := db.Table("cases").Where("id = ?", id).Limit(1, 0).Find(&r); err != nil {
 		return nil, err
+	}
+	if len(r) < 1 {
+		return nil, errors.New("this case (" + strconv.Itoa(id) + ") does not exists!")
 	}
 	return r, nil
 }

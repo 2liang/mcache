@@ -27,6 +27,7 @@ type AddCaseParams struct {
 	MasterHost	string	`form:"master_host" json:"master_host" binding:"required"`
 	SlaveHost	string	`form:"slave_host" json:"slave_host"`
 	Port 		int		`form:"port" json:"port"`
+	Db 			int 	`form:"db" json:"db"`
 }
 
 type UpdateCaseParams struct {
@@ -37,6 +38,7 @@ type UpdateCaseParams struct {
 	MasterHost	string	`form:"master_host" json:"master_host" binding:"required"`
 	SlaveHost	string	`form:"slave_host" json:"slave_host"`
 	Port 		int		`form:"port" json:"port"`
+	Db 			int 	`form:"db" json:"db"`
 }
 
 type DeleteCaseParams struct {
@@ -107,6 +109,7 @@ func AddCase(c *gin.Context) {
 	CaseData.SlaveHost	= params.MasterHost
 	CaseData.SlaveHost	= params.SlaveHost
 	CaseData.Port		= params.Port
+	CaseData.Db			= params.Db
 	CaseData.CreateTime	= time.Now().Unix()
 	res, err := CaseData.AddCase()
 	if err != nil {
@@ -140,6 +143,7 @@ func UpdateCase(c *gin.Context) {
 	CaseData.SlaveHost	= params.MasterHost
 	CaseData.SlaveHost	= params.SlaveHost
 	CaseData.Port		= params.Port
+	CaseData.Db			= params.Db
 	CaseData.ModifyTime = time.Now().Unix()
 	res, err := CaseData.UpdateCase(params.Id)
 	if err != nil {

@@ -60,4 +60,13 @@ func Init(r *gin.Engine) {
 		// 删除key
 		key_r.POST("/delete", controller.DeleteKey)
 	}
+
+	// control
+	control_r := r.Group("/control")
+	{
+		// 获取
+		control_r.GET("/get", controller.GetCache)
+		// 删除
+		control_r.POST("/delete", controller.DeleteCache)
+	}
 }
